@@ -1,0 +1,9 @@
+CORRECCIÓN DE TUBERÍAS VISIBLES
+
+- Se sustituyeron las tuberías SVG casi invisibles por tuberías metálicas CSS con volumen y profundidad.
+- Página Contact: tubería vertical visible entre la navegación y los bloques de contacto, con codo, bridas y válvula roja.
+- Página Tuition & Fees: tubería decorativa visible en la esquina inferior derecha, sin cubrir precios ni botones.
+- Las tuberías no utilizan WebGL ni animaciones continuas para mantener un buen rendimiento.
+- Se conservan los precios corregidos:
+  Electrician Program: $8,000; Books: $150; Registration fee: $600.
+  Plumbing Program: $8,200; Books: $150; Registration fee: $800.

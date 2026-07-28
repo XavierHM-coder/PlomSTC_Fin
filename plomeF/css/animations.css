@@ -1,0 +1,26 @@
+/* Lightweight interaction layer. Continuous decorative pipe animations were removed. */
+
+[data-tilt] {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .18s ease, box-shadow .24s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-tilt]:hover {
+    box-shadow: 0 22px 48px rgba(7, 27, 45, .13);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

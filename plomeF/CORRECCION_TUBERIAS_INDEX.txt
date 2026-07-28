@@ -1,0 +1,7 @@
+CORRECCIÓN DE TUBERÍAS EN INDEX
+
+- Se añadió una sola red decorativa de tuberías metálicas azules con válvula roja en el hero principal.
+- Se mantuvo la tubería de Contact y la tubería discreta de Tuition & Fees.
+- No se añadieron más tuberías en otras secciones para evitar saturación.
+- La nueva tubería es CSS, no usa WebGL ni animación continua, para conservar el rendimiento.
+- Se conservaron los precios corregidos.

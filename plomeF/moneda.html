@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>STC 3D Logo Coin — Corrected Colors</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("embed-mode");
+    }
+  </script>
+
+
+  <style>
+    :root {
+      --navy-950: #020b14;
+      --navy-900: #061522;
+      --navy-800: #0a2438;
+      --blue-700: #0a7fc7;
+      --blue-500: #159be0;
+      --cyan-400: #29c5eb;
+      --cyan-300: #87e7f7;
+      --steel-100: #eaf5f8;
+      --steel-300: #a9c4ce;
+      --white: #ffffff;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 50% 38%, rgba(19, 159, 227, 0.18), transparent 35%),
+        radial-gradient(circle at 15% 20%, rgba(54, 212, 232, 0.10), transparent 28%),
+        linear-gradient(145deg, var(--navy-950), var(--navy-900) 45%, var(--navy-800));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(117, 231, 241, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(117, 231, 241, 0.035) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(circle at center, black, transparent 72%);
+    }
+
+    .page {
+      position: relative;
+      width: min(100%, 1100px);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      isolation: isolate;
+    }
+
+    .ambient-glow {
+      position: absolute;
+      width: min(72vw, 740px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(36, 198, 235, 0.16), rgba(10, 126, 193, 0.05) 45%, transparent 72%);
+      filter: blur(20px);
+      animation: ambientBreathing 5s ease-in-out infinite;
+    }
+
+    @keyframes ambientBreathing {
+      0%, 100% { opacity: 0.65; transform: scale(0.94); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .coin-section {
+      position: relative;
+      z-index: 2;
+      width: min(92vw, 650px);
+      display: grid;
+      justify-items: center;
+      gap: 20px;
+    }
+
+    #coin-canvas {
+      position: relative;
+      width: min(92vw, 590px);
+      aspect-ratio: 1;
+      touch-action: none;
+      cursor: grab;
+      border-radius: 50%;
+      outline: none;
+      filter:
+        drop-shadow(0 38px 38px rgba(0, 0, 0, 0.30))
+        drop-shadow(0 0 40px rgba(25, 177, 228, 0.12));
+    }
+
+    #coin-canvas:active { cursor: grabbing; }
+
+    #coin-canvas:focus-visible {
+      outline: 3px solid var(--cyan-400);
+      outline-offset: 8px;
+    }
+
+    #coin-canvas canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    .loading {
+      position: absolute;
+      z-index: 10;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      border: 1px solid rgba(117, 231, 241, 0.25);
+      border-radius: 999px;
+      color: var(--steel-100);
+      background: rgba(2, 11, 20, 0.82);
+      backdrop-filter: blur(12px);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .loading.is-hidden { opacity: 0; visibility: hidden; }
+
+    .loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(117, 231, 241, 0.25);
+      border-top-color: var(--cyan-400);
+      border-radius: 50%;
+      animation: loadingSpin 0.7s linear infinite;
+    }
+
+    @keyframes loadingSpin { to { transform: rotate(360deg); } }
+
+    .interaction-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 510px;
+      padding: 12px 18px;
+      border: 1px solid rgba(117, 231, 241, 0.18);
+      border-radius: 999px;
+      color: var(--steel-300);
+      background: rgba(2, 11, 20, 0.50);
+      backdrop-filter: blur(12px);
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: left;
+    }
+
+    .interaction-hint strong { color: var(--white); font-weight: 700; }
+
+    .interaction-dot {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cyan-400);
+      box-shadow:
+        0 0 0 5px rgba(54, 212, 232, 0.09),
+        0 0 18px rgba(54, 212, 232, 0.80);
+      animation: dotPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(0.8); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .spin-status {
+      min-height: 24px;
+      color: var(--cyan-300);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .spin-status.is-visible { opacity: 1; transform: translateY(0); }
+
+    .error-message {
+      max-width: 360px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 120, 120, 0.30);
+      border-radius: 18px;
+      color: #ffd7d7;
+      background: rgba(80, 10, 10, 0.82);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page { padding: 18px; }
+      #coin-canvas { width: min(94vw, 450px); }
+      .interaction-hint { border-radius: 18px; font-size: 12px; }
+    }
+
+
+    /* Embedded hero mode: completely self-contained and transparent. */
+    html.embed-mode,
+    html.embed-mode body {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      background: transparent !important;
+    }
+
+    html.embed-mode body::before,
+    html.embed-mode .ambient-glow,
+    html.embed-mode .interaction-hint,
+    html.embed-mode .spin-status {
+      display: none !important;
+    }
+
+    html.embed-mode .page {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    html.embed-mode .coin-section {
+      width: 100%;
+      height: 100%;
+      gap: 0;
+      place-items: center;
+    }
+
+    html.embed-mode #coin-canvas {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      aspect-ratio: 1;
+      filter: none;
+    }
+
+    html.embed-mode #coin-canvas canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    html.embed-mode .loading {
+      transform: translate(-50%, -50%) scale(.84);
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="ambient-glow" aria-hidden="true"></div>
+
+    <section class="coin-section">
+      <div
+        id="coin-canvas"
+        role="img"
+        tabindex="0"
+        aria-label="Continuously rotating three-dimensional Serna Technical Center logo. Hold and drag to trigger ten fast rotations."
+      >
+        <div class="loading" id="loading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <span>Loading STC 3D logo</span>
+        </div>
+      </div>
+
+      <div class="interaction-hint">
+        <span class="interaction-dot" aria-hidden="true"></span>
+        <p>
+          The logo rotates continuously.
+          <strong>Hold and drag it in any direction</strong>
+          to trigger 10 fast spins.
+        </p>
+      </div>
+
+      <p class="spin-status" id="spin-status" aria-live="polite">
+        10-spin boost activated
+      </p>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    class STCLogoCoin {
+      constructor() {
+        this.container = document.getElementById("coin-canvas");
+        this.loadingElement = document.getElementById("loading");
+        this.statusElement = document.getElementById("spin-status");
+
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+
+        this.coinTiltGroup = null;
+        this.coinRotationGroup = null;
+        this.coinBody = null;
+
+        this.keyLight = null;
+        this.cyanLight = null;
+
+        this.logoTexture = null;
+        this.logoHeightTexture = null;
+
+        this.baseAngle = THREE.MathUtils.degToRad(-18);
+        this.baseSpeed = THREE.MathUtils.degToRad(16);
+        this.currentBaseSpeed = this.baseSpeed;
+        this.hoverSpeed = THREE.MathUtils.degToRad(28);
+
+        this.pointerInside = false;
+        this.pointerDown = false;
+        this.pointerId = null;
+        this.pointerX = 0;
+        this.pointerY = 0;
+        this.startPointerX = 0;
+        this.startPointerY = 0;
+        this.dragTriggered = false;
+
+        this.targetTiltX = THREE.MathUtils.degToRad(-7);
+        this.targetTiltZ = THREE.MathUtils.degToRad(0);
+        this.currentTiltX = this.targetTiltX;
+        this.currentTiltZ = this.targetTiltZ;
+
+        this.targetScale = 1;
+        this.currentScale = 1;
+
+        this.fastSpin = {
+          active: false,
+          startTime: 0,
+          duration: 1850,
+          turns: 10,
+          direction: 1,
+          angle: 0
+        };
+
+        this.lastTime = performance.now();
+        this.animationFrame = null;
+        this.isPageActive = true;
+
+        this.logoPaths = [
+          "assets/images/stc-logo-compact.webp",
+          "./assets/images/stc-logo-compact.webp"
+        ];
+
+        this.init();
+      }
+
+      async init() {
+        try {
+          this.logoTexture = await this.loadAvailableLogo(this.logoPaths);
+          this.logoHeightTexture = this.createLogoHeightTexture(this.logoTexture);
+
+          this.createScene();
+          this.createCamera();
+          this.createRenderer();
+          this.createLights();
+          this.createCoin();
+          this.createSoftShadow();
+          this.createOrbitParticles();
+          this.addEvents();
+          this.resize();
+
+          this.loadingElement.classList.add("is-hidden");
+          this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+        } catch (error) {
+          console.error(error);
+          this.showError();
+        }
+      }
+
+      loadAvailableLogo(paths) {
+        return new Promise((resolve, reject) => {
+          const loader = new THREE.TextureLoader();
+
+          const tryPath = (index) => {
+            if (index >= paths.length) {
+              reject(new Error("The STC logo could not be found."));
+              return;
+            }
+
+            loader.load(
+              paths[index],
+              (texture) => {
+                texture.encoding = THREE.sRGBEncoding;
+                texture.anisotropy = 4;
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
+                texture.needsUpdate = true;
+                resolve(texture);
+              },
+              undefined,
+              () => tryPath(index + 1)
+            );
+          };
+
+          tryPath(0);
+        });
+      }
+
+      createLogoHeightTexture(sourceTexture) {
+        const image = sourceTexture.image;
+        const size = 1024;
+
+        const sourceCanvas = document.createElement("canvas");
+        sourceCanvas.width = size;
+        sourceCanvas.height = size;
+
+        const sourceContext = sourceCanvas.getContext("2d", {
+          willReadFrequently: true
+        });
+
+        sourceContext.clearRect(0, 0, size, size);
+        sourceContext.drawImage(image, 0, 0, size, size);
+
+        const sourceData = sourceContext.getImageData(0, 0, size, size);
+        const pixels = sourceData.data;
+
+        for (let index = 0; index < pixels.length; index += 4) {
+          const red = pixels[index];
+          const green = pixels[index + 1];
+          const blue = pixels[index + 2];
+          const alpha = pixels[index + 3];
+
+          if (alpha < 20) {
+            pixels[index] = 0;
+            pixels[index + 1] = 0;
+            pixels[index + 2] = 0;
+            pixels[index + 3] = 255;
+            continue;
+          }
+
+          const luminance = red * 0.299 + green * 0.587 + blue * 0.114;
+          const isWhiteDetail = red > 182 && green > 182 && blue > 182;
+          const isBlueDetail = blue > 105 && blue > red * 1.14 && blue > green * 1.02;
+          const isLightBlue = blue > 150 && green > 105;
+
+          let heightValue = 18;
+
+          /*
+           * White lettering, laurels, stars and shield outlines
+           * receive the strongest physical embossing.
+           */
+          if (isWhiteDetail) {
+            heightValue = 255;
+          } else if (isLightBlue) {
+            heightValue = 168;
+          } else if (isBlueDetail) {
+            heightValue = 128;
+          } else if (luminance > 95) {
+            heightValue = 72;
+          } else {
+            /* Black areas remain low so the original contrast is preserved. */
+            heightValue = 18;
+          }
+
+          pixels[index] = heightValue;
+          pixels[index + 1] = heightValue;
+          pixels[index + 2] = heightValue;
+          pixels[index + 3] = 255;
+        }
+
+        sourceContext.putImageData(sourceData, 0, 0);
+
+        /* A very light blur avoids sharp spikes while keeping relief visible. */
+        const blurCanvas = document.createElement("canvas");
+        blurCanvas.width = size;
+        blurCanvas.height = size;
+
+        const blurContext = blurCanvas.getContext("2d");
+        blurContext.filter = "blur(0.55px)";
+        blurContext.drawImage(sourceCanvas, 0, 0);
+
+        const texture = new THREE.CanvasTexture(blurCanvas);
+        texture.encoding = THREE.LinearEncoding;
+        texture.anisotropy = 4;
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.needsUpdate = true;
+
+        return texture;
+      }
+
+      createEmbossedFaceMaterial() {
+        return new THREE.MeshPhysicalMaterial({
+          map: this.logoTexture,
+          color: 0xffffff,
+
+          /* Real geometric relief. */
+          displacementMap: this.logoHeightTexture,
+          displacementScale: 0.062,
+          displacementBias: -0.010,
+
+          /* Fine highlights for letters and line work. */
+          bumpMap: this.logoHeightTexture,
+          bumpScale: 0.105,
+
+          transparent: true,
+          alphaTest: 0.02,
+
+          /* Low metalness preserves the original blue, black and white. */
+          metalness: 0.025,
+          roughness: 0.45,
+          clearcoat: 0.58,
+          clearcoatRoughness: 0.22,
+          reflectivity: 0.24,
+
+          side: THREE.FrontSide
+        });
+      }
+
+      createScene() {
+        this.scene = new THREE.Scene();
+        this.scene.background = null;
+      }
+
+      createCamera() {
+        this.camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+        this.camera.position.set(0, 0.04, 4.55);
+        this.camera.lookAt(0, 0, 0);
+      }
+
+      createRenderer() {
+        this.renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: true,
+          powerPreference: "high-performance"
+        });
+
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 0.96;
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.domElement.setAttribute("aria-hidden", "true");
+        this.container.appendChild(this.renderer.domElement);
+      }
+
+      createLights() {
+        const hemisphereLight = new THREE.HemisphereLight(0xe8fbff, 0x06111c, 1.35);
+        this.scene.add(hemisphereLight);
+
+        this.keyLight = new THREE.DirectionalLight(0xffffff, 2.15);
+        this.keyLight.position.set(3.6, 4.2, 5);
+        this.keyLight.castShadow = true;
+        this.scene.add(this.keyLight);
+
+        const fillLight = new THREE.DirectionalLight(0x5aaee9, 1.05);
+        fillLight.position.set(-4, 0.5, 3);
+        this.scene.add(fillLight);
+
+        this.cyanLight = new THREE.PointLight(0x1688db, 2.15, 10);
+        this.cyanLight.position.set(2.3, -1, 2.8);
+        this.scene.add(this.cyanLight);
+
+        const backLight = new THREE.PointLight(0x0a7fc7, 1.8, 9);
+        backLight.position.set(-1.8, 2.2, -2.8);
+        this.scene.add(backLight);
+
+        const grazingLight = new THREE.PointLight(0xffffff, 1.65, 7);
+        grazingLight.position.set(-3.2, -1.8, 2.5);
+        this.scene.add(grazingLight);
+      }
+
+      createCoin() {
+        this.coinTiltGroup = new THREE.Group();
+        this.coinRotationGroup = new THREE.Group();
+        this.coinBody = new THREE.Group();
+
+        this.coinTiltGroup.add(this.coinRotationGroup);
+        this.coinRotationGroup.add(this.coinBody);
+        this.scene.add(this.coinTiltGroup);
+
+        const radius = 1.18;
+        const thickness = 0.36;
+        const halfDepth = thickness / 2;
+
+        const bodyGeometry = new THREE.CylinderGeometry(radius, radius, thickness, 160, 12, false);
+        const bodyMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x111820,
+          metalness: 0.9,
+          roughness: 0.25,
+          clearcoat: 0.68,
+          clearcoatRoughness: 0.17,
+          reflectivity: 0.72
+        });
+
+        const metallicBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        metallicBody.rotation.x = Math.PI / 2;
+        metallicBody.castShadow = true;
+        metallicBody.receiveShadow = true;
+        this.coinBody.add(metallicBody);
+
+        const faceGeometry = this.createReliefDiscGeometry(radius * 0.935, 96, 288);
+
+        const frontFace = new THREE.Mesh(faceGeometry, this.createEmbossedFaceMaterial());
+        frontFace.position.z = halfDepth + 0.024;
+        frontFace.castShadow = true;
+        frontFace.receiveShadow = true;
+        this.coinBody.add(frontFace);
+
+        const backFace = new THREE.Mesh(faceGeometry.clone(), this.createEmbossedFaceMaterial());
+        backFace.position.z = -halfDepth - 0.024;
+        backFace.rotation.y = Math.PI;
+        backFace.castShadow = true;
+        backFace.receiveShadow = true;
+        this.coinBody.add(backFace);
+
+        this.addRim(radius * 0.995, 0.052, halfDepth + 0.030, 0x1688db);
+        this.addRim(radius * 0.995, 0.052, -halfDepth - 0.030, 0x1688db);
+        this.addRim(radius * 0.925, 0.020, halfDepth + 0.044, 0xf5fbff);
+        this.addRim(radius * 0.925, 0.020, -halfDepth - 0.044, 0xf5fbff);
+
+        this.createEdgeRidges(radius, thickness);
+        this.createInnerLip(radius, halfDepth);
+
+        this.coinRotationGroup.rotation.y = this.baseAngle;
+      }
+
+      createReliefDiscGeometry(
+        radius,
+        radialSegments = 96,
+        angularSegments = 288
+      ) {
+        const positions = [];
+        const uvs = [];
+        const indices = [];
+
+        /* One true center vertex. */
+        positions.push(0, 0, 0);
+        uvs.push(0.5, 0.5);
+
+        /* Concentric rings distribute vertices over the entire logo face. */
+        for (let radialIndex = 1; radialIndex <= radialSegments; radialIndex += 1) {
+          const radialProgress = radialIndex / radialSegments;
+          const currentRadius = radius * radialProgress;
+
+          for (let angularIndex = 0; angularIndex <= angularSegments; angularIndex += 1) {
+            const angle = (angularIndex / angularSegments) * Math.PI * 2;
+            const x = Math.cos(angle) * currentRadius;
+            const y = Math.sin(angle) * currentRadius;
+
+            positions.push(x, y, 0);
+            uvs.push(
+              0.5 + x / (radius * 2),
+              0.5 + y / (radius * 2)
+            );
+          }
+        }
+
+        const firstRingStart = 1;
+
+        /* Center fan. */
+        for (let angularIndex = 0; angularIndex < angularSegments; angularIndex += 1) {
+          indices.push(
+            0,
+            firstRingStart + angularIndex,
+            firstRingStart + angularIndex + 1
+          );
+        }
+
+        /* Connect every ring to the next one. */
+        for (let radialIndex = 1; radialIndex < radialSegments; radialIndex += 1) {
+          const currentRingStart =
+            1 + (radialIndex - 1) * (angularSegments + 1);
+
+          const nextRingStart =
+            1 + radialIndex * (angularSegments + 1);
+
+          for (let angularIndex = 0; angularIndex < angularSegments; angularIndex += 1) {
+            const currentA = currentRingStart + angularIndex;
+            const currentB = currentRingStart + angularIndex + 1;
+            const nextA = nextRingStart + angularIndex;
+            const nextB = nextRingStart + angularIndex + 1;
+
+            indices.push(currentA, nextA, currentB);
+            indices.push(currentB, nextA, nextB);
+          }
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(positions, 3)
+        );
+        geometry.setAttribute(
+          "uv",
+          new THREE.Float32BufferAttribute(uvs, 2)
+        );
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+        geometry.computeBoundingSphere();
+
+        return geometry;
+      }
+
+      createInnerLip(radius, halfDepth) {
+        const lipGeometry = new THREE.TorusGeometry(radius * 0.952, 0.012, 12, 160);
+        const lipMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x0a5f91,
+          metalness: 0.82,
+          roughness: 0.24,
+          clearcoat: 0.9
+        });
+
+        const frontLip = new THREE.Mesh(lipGeometry, lipMaterial);
+        frontLip.position.z = halfDepth + 0.050;
+        this.coinBody.add(frontLip);
+
+        const backLip = frontLip.clone();
+        backLip.position.z = -halfDepth - 0.050;
+        this.coinBody.add(backLip);
+      }
+
+      addRim(radius, tube, zPosition, color) {
+        const geometry = new THREE.TorusGeometry(radius, tube, 28, 180);
+        const material = new THREE.MeshPhysicalMaterial({
+          color,
+          metalness: 0.92,
+          roughness: 0.16,
+          clearcoat: 1,
+          clearcoatRoughness: 0.08
+        });
+
+        const rim = new THREE.Mesh(geometry, material);
+        rim.position.z = zPosition;
+        rim.castShadow = true;
+        this.coinBody.add(rim);
+      }
+
+      createEdgeRidges(radius, thickness) {
+        const ridgeGeometry = new THREE.BoxGeometry(0.026, 0.076, thickness * 0.94);
+
+        const steelMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0xb8c7d1,
+          metalness: 1,
+          roughness: 0.24,
+          clearcoat: 0.62
+        });
+
+        const blueMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x1688db,
+          metalness: 0.88,
+          roughness: 0.22,
+          clearcoat: 0.72
+        });
+
+        const ridgeCount = 88;
+
+        for (let index = 0; index < ridgeCount; index += 1) {
+          const angle = (index / ridgeCount) * Math.PI * 2;
+          const ridge = new THREE.Mesh(
+            ridgeGeometry,
+            index % 4 === 0 ? blueMaterial : steelMaterial
+          );
+
+          const edgeRadius = radius * 1.002;
+          ridge.position.set(Math.cos(angle) * edgeRadius, Math.sin(angle) * edgeRadius, 0);
+          ridge.rotation.z = angle;
+          ridge.castShadow = true;
+          this.coinBody.add(ridge);
+        }
+      }
+
+      createSoftShadow() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 256;
+        const context = canvas.getContext("2d");
+
+        const gradient = context.createRadialGradient(128, 128, 10, 128, 128, 128);
+        gradient.addColorStop(0, "rgba(21, 155, 224, 0.30)");
+        gradient.addColorStop(0.35, "rgba(10, 95, 145, 0.18)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 256, 256);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: false
+        });
+
+        const shadow = new THREE.Sprite(material);
+        shadow.position.set(0, -1.35, -0.6);
+        shadow.scale.set(3.3, 0.78, 1);
+        this.scene.add(shadow);
+      }
+
+      createOrbitParticles() {
+        const particleGroup = new THREE.Group();
+        const geometry = new THREE.SphereGeometry(0.018, 12, 12);
+        const material = new THREE.MeshBasicMaterial({ color: 0x29c5eb });
+
+        for (let index = 0; index < 10; index += 1) {
+          const particle = new THREE.Mesh(geometry, material);
+          const angle = (index / 10) * Math.PI * 2;
+          const radius = 1.55 + Math.sin(index * 1.7) * 0.11;
+
+          particle.position.set(
+            Math.cos(angle) * radius,
+            Math.sin(angle) * radius * 0.48,
+            -0.6 + Math.sin(index) * 0.2
+          );
+
+          particle.scale.setScalar(0.45 + Math.random() * 0.7);
+          particleGroup.add(particle);
+        }
+
+        particleGroup.rotation.x = THREE.MathUtils.degToRad(18);
+        this.orbitParticles = particleGroup;
+        this.scene.add(particleGroup);
+      }
+
+      addEvents() {
+        this.container.addEventListener("pointerenter", this.handlePointerEnter.bind(this));
+        this.container.addEventListener("pointermove", this.handlePointerMove.bind(this));
+        this.container.addEventListener("pointerleave", this.handlePointerLeave.bind(this));
+        this.container.addEventListener("pointerdown", this.handlePointerDown.bind(this));
+        this.container.addEventListener("pointerup", this.handlePointerUp.bind(this));
+        this.container.addEventListener("pointercancel", this.handlePointerUp.bind(this));
+        this.container.addEventListener("keydown", this.handleKeyDown.bind(this));
+        window.addEventListener("resize", this.resize.bind(this));
+
+        window.addEventListener("message", (event) => {
+          if (event.data?.type !== "stc-coin-visibility") return;
+          this.isPageActive = Boolean(event.data.active);
+          this.lastTime = performance.now();
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) this.lastTime = performance.now();
+        });
+      }
+
+      handlePointerEnter() {
+        this.pointerInside = true;
+        this.targetScale = 1.035;
+      }
+
+      handlePointerMove(event) {
+        const bounds = this.container.getBoundingClientRect();
+        const normalizedX = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+        const normalizedY = ((event.clientY - bounds.top) / bounds.height) * 2 - 1;
+
+        this.pointerX = THREE.MathUtils.clamp(normalizedX, -1, 1);
+        this.pointerY = THREE.MathUtils.clamp(normalizedY, -1, 1);
+
+        this.targetTiltX = THREE.MathUtils.degToRad(-7 - this.pointerY * 13);
+        this.targetTiltZ = THREE.MathUtils.degToRad(-this.pointerX * 7);
+
+        if (this.pointerDown && !this.dragTriggered) {
+          const distanceX = event.clientX - this.startPointerX;
+          const distanceY = event.clientY - this.startPointerY;
+          const distance = Math.hypot(distanceX, distanceY);
+
+          if (distance >= 20) {
+            this.dragTriggered = true;
+            const direction = Math.abs(distanceX) >= Math.abs(distanceY)
+              ? Math.sign(distanceX) || 1
+              : -Math.sign(distanceY) || 1;
+            this.startTenSpinBoost(direction);
+          }
+        }
+      }
+
+      handlePointerLeave() {
+        this.pointerInside = false;
+        if (!this.pointerDown) this.resetPointerTilt();
+      }
+
+      handlePointerDown(event) {
+        if (this.fastSpin.active) return;
+
+        this.pointerDown = true;
+        this.pointerId = event.pointerId;
+        this.startPointerX = event.clientX;
+        this.startPointerY = event.clientY;
+        this.dragTriggered = false;
+        this.targetScale = 1.065;
+        this.container.setPointerCapture(event.pointerId);
+      }
+
+      handlePointerUp() {
+        if (this.pointerId !== null) {
+          try { this.container.releasePointerCapture(this.pointerId); } catch (_) {}
+        }
+
+        this.pointerDown = false;
+        this.pointerId = null;
+        this.dragTriggered = false;
+        this.targetScale = this.pointerInside ? 1.035 : 1;
+        if (!this.pointerInside) this.resetPointerTilt();
+      }
+
+      handleKeyDown(event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          this.startTenSpinBoost(1);
+        }
+      }
+
+      resetPointerTilt() {
+        this.pointerX = 0;
+        this.pointerY = 0;
+        this.targetTiltX = THREE.MathUtils.degToRad(-7);
+        this.targetTiltZ = 0;
+        this.targetScale = 1;
+      }
+
+      startTenSpinBoost(direction = 1) {
+        if (this.fastSpin.active) return;
+
+        this.fastSpin.active = true;
+        this.fastSpin.startTime = performance.now();
+        this.fastSpin.direction = direction >= 0 ? 1 : -1;
+        this.fastSpin.angle = 0;
+        this.targetScale = 1.08;
+
+        this.statusElement.classList.add("is-visible");
+        this.statusElement.textContent = direction >= 0
+          ? "10-spin boost activated"
+          : "10-spin reverse boost activated";
+      }
+
+      easeInOutQuint(value) {
+        return value < 0.5
+          ? 16 * value ** 5
+          : 1 - Math.pow(-2 * value + 2, 5) / 2;
+      }
+
+      updateFastSpin(now) {
+        if (!this.fastSpin.active) {
+          this.fastSpin.angle = 0;
+          return;
+        }
+
+        const elapsed = now - this.fastSpin.startTime;
+        const progress = Math.min(elapsed / this.fastSpin.duration, 1);
+        const easedProgress = this.easeInOutQuint(progress);
+
+        this.fastSpin.angle =
+          this.fastSpin.direction *
+          this.fastSpin.turns *
+          Math.PI *
+          2 *
+          easedProgress;
+
+        if (progress >= 1) {
+          this.fastSpin.active = false;
+          this.fastSpin.angle = 0;
+          this.targetScale = this.pointerInside ? 1.035 : 1;
+          this.statusElement.classList.remove("is-visible");
+        }
+      }
+
+      animate(now) {
+        if (document.hidden || !this.isPageActive) {
+          this.lastTime = now;
+          this.animationFrame = setTimeout(() => {
+            requestAnimationFrame(this.animate.bind(this));
+          }, 240);
+          return;
+        }
+
+        this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+
+        const delta = Math.min((now - this.lastTime) / 1000, 0.05);
+        this.lastTime = now;
+
+        const desiredSpeed = this.pointerInside ? this.hoverSpeed : this.baseSpeed;
+        this.currentBaseSpeed +=
+          (desiredSpeed - this.currentBaseSpeed) * Math.min(1, delta * 4.5);
+
+        this.baseAngle =
+          (this.baseAngle + this.currentBaseSpeed * delta) % (Math.PI * 2);
+
+        this.updateFastSpin(now);
+
+        const idlePitch =
+          Math.sin(now * 0.0011) * THREE.MathUtils.degToRad(2.2);
+        const idleRoll =
+          Math.sin(now * 0.00072) * THREE.MathUtils.degToRad(1.5);
+
+        this.currentTiltX +=
+          (this.targetTiltX + idlePitch - this.currentTiltX) *
+          Math.min(1, delta * 7);
+
+        this.currentTiltZ +=
+          (this.targetTiltZ + idleRoll - this.currentTiltZ) *
+          Math.min(1, delta * 7);
+
+        this.coinTiltGroup.rotation.x = this.currentTiltX;
+        this.coinTiltGroup.rotation.z = this.currentTiltZ;
+        this.coinRotationGroup.rotation.y = this.baseAngle + this.fastSpin.angle;
+
+        this.currentScale +=
+          (this.targetScale - this.currentScale) * Math.min(1, delta * 8);
+
+        this.coinTiltGroup.scale.setScalar(this.currentScale);
+        this.coinTiltGroup.position.y = Math.sin(now * 0.00135) * 0.045;
+
+        if (this.orbitParticles) {
+          this.orbitParticles.rotation.z += delta * 0.09;
+          this.orbitParticles.rotation.y = Math.sin(now * 0.0007) * 0.2;
+        }
+
+        this.keyLight.position.x = 3.6 + this.pointerX * 1.8;
+        this.keyLight.position.y = 4.2 - this.pointerY * 1.4;
+        this.cyanLight.position.x = 2.3 - this.pointerX * 1.3;
+        this.cyanLight.position.y = -1 - this.pointerY * 0.8;
+
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      resize() {
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height, false);
+      }
+
+      showError() {
+        this.loadingElement.remove();
+        const message = document.createElement("div");
+        message.className = "error-message";
+        message.innerHTML = `
+          <strong>The STC logo could not be loaded.</strong><br>
+          Make sure one of these files exists:<br>
+          <code>assets/images/stc-logo-compact.webp</code>
+        `;
+        this.container.appendChild(message);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      new STCLogoCoin();
+    });
+  </script>
+</body>
+</html>

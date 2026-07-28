@@ -1,0 +1,21 @@
+SERNA TECHNICAL CENTER — OPTIMIZACIÓN VISUAL Y DE RENDIMIENTO
+
+Cambios realizados:
+- Se retiraron 24 escenas de tuberías 3D distribuidas en la página principal y subpáginas.
+- Se eliminó la tubería grande que ocupaba el lado derecho de la sección de Admissions.
+- Se conservaron las secciones, textos, botones, formularios e identidad visual.
+- Se dejó un solo elemento 3D: el logotipo de la portada, ahora más pequeño y ligero.
+- El logotipo 3D se pausa cuando queda fuera de pantalla o la pestaña no está activa.
+- Se redujo la resolución interna y la cantidad de partículas del logotipo 3D.
+- Se eliminó el movimiento continuo de la marquesina y de elementos decorativos innecesarios.
+- Las tarjetas de los cuatro pasos de Admissions ahora son más pequeñas y el texto ocupa correctamente el espacio disponible.
+- Se agregó carga diferida a imágenes secundarias y dimensiones explícitas para reducir saltos de diseño.
+- Se optimizó el evento de scroll mediante requestAnimationFrame.
+- Se agregó content-visibility a las secciones inferiores para evitar renderizar contenido lejano antes de necesitarlo.
+- Se respetan las preferencias del sistema para reducir movimiento.
+
+Prueba recomendada:
+1. Abrir index.html con Live Server.
+2. Revisar escritorio, tableta y celular.
+3. Desplazarse por toda la página y abrir cada opción del menú.
+4. Confirmar que el formulario y los botones continúen funcionando.

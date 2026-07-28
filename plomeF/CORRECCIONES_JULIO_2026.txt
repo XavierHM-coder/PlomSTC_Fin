@@ -1,0 +1,21 @@
+CORRECCIONES REALIZADAS
+
+1. Precios actualizados:
+   - Electrician Program: $8,000 total, $150 books, $600 registration fee.
+   - Plumbing Program: $8,200 total, $150 books, $800 registration fee.
+   - Ambos programas: 24 weeks / 192 hours.
+
+2. Página Tuition & Fees actualizada con dos tarjetas separadas y la información correcta.
+
+3. Sección de precios de la página principal actualizada.
+
+4. FAQ y página Refund & Cancellation corregidas para que no muestren precios anteriores.
+
+5. Página Contact:
+   - Bloques de información más pequeños y compactos.
+   - Una tubería decorativa estática colocada al costado, sin tapar contenido.
+   - Diseño optimizado sin animaciones pesadas.
+
+6. Página Tuition & Fees:
+   - Una tubería decorativa discreta al fondo.
+   - Sin saturar otras páginas con tuberías.
